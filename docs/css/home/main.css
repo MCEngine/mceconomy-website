@@ -26,6 +26,7 @@ body.night-theme {
 
 .button-container {
     display: flex;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -47,4 +48,45 @@ body.night-theme {
     color: white;
     border-color: var(--accent-color);
     transform: translateY(-2px);
+}
+
+.content-wrapper {
+    text-align: center;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #8b949e;
+    margin-bottom: 40px;
+}
+
+/* Currency Grid Styling */
+.currency-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.currency-item {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #c9d1d9;
+}
+
+.currency-item span {
+    margin-right: 5px;
 }
