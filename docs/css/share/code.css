@@ -1,0 +1,35 @@
+.code-container {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+    font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+.code-header {
+    background: #0d1117;
+    padding: 8px 16px;
+    border-bottom: 1px solid #30363d;
+    color: #8b949e;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+pre {
+    margin: 0;
+    padding: 20px;
+    overflow-x: auto;
+    color: #e6edf3;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Basic Syntax Highlighting Classes */
+.keyword { color: #ff7b72; }
+.class-name { color: #ffa657; }
+.method { color: #d2a8ff; }
+.string { color: #a5d6ff; }
+.comment { color: #8b949e; font-style: italic; }
+.annotation { color: #d2a8ff; }

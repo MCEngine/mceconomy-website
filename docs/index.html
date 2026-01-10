@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCEconomy - Home</title>
+    <link rel="stylesheet" href="css/partial/header.css">
+    <link rel="stylesheet" href="css/partial/footer.css">
+    <link rel="stylesheet" href="css/home/main.css">
+</head>
+<body class="night-theme">
+
+    <div id="header-placeholder"></div>
+
+    <main class="hero-section">
+        <div class="content-wrapper">
+            <h1 class="hero-title">🪙 MCEconomy</h1>
+            <p class="hero-subtitle">A dedicated economy plugin built exclusively for <strong>PaperMC</strong> servers.</p>
+            
+            <div class="currency-grid">
+                <div class="currency-item"><span>⚫</span> COIN</div>
+                <div class="currency-item"><span>🟤</span> COPPER</div>
+                <div class="currency-item"><span>⚪</span> SILVER</div>
+                <div class="currency-item"><span>🟡</span> GOLD</div>
+            </div>
+
+            <div class="button-container">
+                <a href="api" class="btn">API</a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        const loadPartial = (id, path) => {
+            fetch(path)
+                .then(response => response.text())
+                .then(data => document.getElementById(id).innerHTML = data);
+        };
+        loadPartial('header-placeholder', 'partial/header.html');
+        loadPartial('footer-placeholder', 'partial/footer.html');
+    </script>
+</body>
+</html>
