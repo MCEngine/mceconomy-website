@@ -1,0 +1,48 @@
+{
+    "name": "Landing Page Dev (HTML/CSS/JS)",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        // Forces latest Git
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest",
+            "ppa": "true"
+        },
+        // Installs GitHub CLI (gh)
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        // Installs Node.js (useful for modern web tooling/minifiers)
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "workbench.colorTheme": "Default Dark Modern",
+                "liveServer.settings.donotShowInfoMsg": true,
+                "liveServer.settings.port": 5500,
+                "editor.formatOnSave": true
+            },
+            "extensions": [
+                // --- WEB DEVELOPMENT ---
+                "ritwickdey.LiveServer",
+                "ecmel.vscode-html-css",
+                "christian-kohler.path-intellisense",
+                
+                // --- GITHUB INTEGRATION ---
+                "github.vscode-pull-request-github",
+                "eamodio.gitlens",
+
+                // --- UTILITIES ---
+                "esbenp.prettier-vscode",
+                "codeium.codeium"
+            ]
+        }
+    },
+    // Expose the Live Server port
+    "forwardPorts": [5500],
+    "postCreateCommand": "echo '--- ENVIRONMENT READY ---' && git --version && node --version && npm --version",
+    "remoteUser": "vscode"
+}
