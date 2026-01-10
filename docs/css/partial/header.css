@@ -1,0 +1,19 @@
+header {
+    /* Top/Bottom: 20px | Left/Right: 40px */
+    padding: 20px 40px; 
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    text-decoration: none;
+    font-size: 1.4rem; /* Slightly larger for better visibility */
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.header-logo:hover {
+    transform: scale(1.02);
+}

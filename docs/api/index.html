@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCEconomy - API</title>
+    <link rel="stylesheet" href="../css/home/main.css">
+    <link rel="stylesheet" href="../css/partial/header.css">
+    <link rel="stylesheet" href="../css/partial/footer.css">
+    <link rel="stylesheet" href="../css/share/code.css">
+</head>
+<body class="night-theme">
+    <div id="header-placeholder"></div>
+
+    <main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+        <h1 style="color: var(--accent-color);">API Module Documentation</h1>
+        <p>Learn how to interact with the MCEconomy provider and register subcommands.</p>
+
+        <section>
+        <h2>1. Using the Provider</h2>
+        <p>The <code>MCEconomyProvider</code> handles all database operations asynchronously. Addons should retrieve the provider via the <strong>Bukkit Services Manager</strong>.</p>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span>Java</span>
+                <span>ProviderAccess.java</span>
+            </div>
+            <pre>
+<span class="comment">// 1. Retrieve the Provider from Services Manager</span>
+<span class="class-name">RegisteredServiceProvider</span>&lt;<span class="class-name">MCEconomyProvider</span>&gt; rsp = 
+    Bukkit.<span class="method">getServicesManager</span>().<span class="method">getRegistration</span>(<span class="class-name">MCEconomyProvider</span>.class);
+
+<span class="keyword">if</span> (rsp != <span class="keyword">null</span>) {
+    <span class="class-name">MCEconomyProvider</span> provider = rsp.<span class="method">getProvider</span>();
+
+    <span class="comment">// 2. Get balance for a player (Asynchronous)</span>
+    provider.<span class="method">getCoin</span>(playerUuid, <span class="string">"gold"</span>).<span class="method">thenAccept</span>(balance -> {
+        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Balance is: "</span> + balance);
+    });
+
+    <span class="comment">// 3. Add coins to a player</span>
+    provider.<span class="method">addCoin</span>(playerUuid, <span class="string">"silver"</span>, <span class="keyword">100</span>);
+}</pre>
+        </div>
+    </section>
+
+        <section>
+        <h2>2. Registering Subcommands (Addons)</h2>
+        <p>Addons should use the <strong>Bukkit Services Manager</strong> to find the Command Manager. This prevents hard dependencies.</p>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span>Java</span>
+                <span>AddonRegistration.java</span>
+            </div>
+            <pre>
+<span class="comment">// 1. Retrieve the Command Manager from Services Manager</span>
+<span class="class-name">RegisteredServiceProvider</span>&lt;<span class="class-name">MCEconomyCommandManager</span>&gt; rsp = 
+    Bukkit.<span class="method">getServicesManager</span>().<span class="method">getRegistration</span>(<span class="class-name">MCEconomyCommandManager</span>.class);
+
+<span class="keyword">if</span> (rsp != <span class="keyword">null</span>) {
+    <span class="class-name">MCEconomyCommandManager</span> manager = rsp.<span class="method">getProvider</span>();
+
+    <span class="comment">// 2. Register your custom logic</span>
+    manager.<span class="method">register</span>(<span class="string">"mycommand"</span>, <span class="keyword">new</span> <span class="class-name">MyCustomHandle</span>());
+}</pre>
+        </div>
+    </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        const loadPartial = (id, path) => {
+            fetch(path).then(res => res.text()).then(data => document.getElementById(id).innerHTML = data);
+        };
+        loadPartial('header-placeholder', '../partial/header.html');
+        loadPartial('footer-placeholder', '../partial/footer.html');
+    </script>
+</body>
+</html>
