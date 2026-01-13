@@ -14,7 +14,7 @@
 
     <main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
         <h1 style="color: var(--accent-color);">API Module Documentation</h1>
-        <p>Learn how to interact with the MCEconomy provider and register subcommands.</p>
+        <p>Learn how to interact with the MCEconomy provider, register subcommands, and handle listeners.</p>
 
         <section>
         <h2>1. Using the Provider</h2>
@@ -60,6 +60,29 @@
 
     <span class="comment">// 3. Register your custom logic</span>
     manager.<span class="method">register</span>(<span class="string">"mycommand"</span>, <span class="keyword">new</span> <span class="class-name">MyCustomHandle</span>());
+}</pre>
+        </div>
+    </section>
+
+        <section>
+        <h2>3. Registering Event Listeners (Addons)</h2>
+        <p>Addons can register custom event listeners through the Listener Manager. This ensures the main plugin tracks all related listeners.</p>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span>Java</span>
+                <span>ListenerRegistration.java</span>
+            </div>
+            <pre>
+<span class="comment">// 1. Retrieve the Provider</span>
+<span class="class-name">MCEconomyProvider</span> provider = <span class="class-name">MCEconomyProvider</span>.<span class="method">getInstance</span>();
+
+<span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
+    <span class="comment">// 2. Get the Listener Manager</span>
+    <span class="class-name">MCEconomyListenerManager</span> listenerManager = provider.<span class="method">getListenerManager</span>();
+
+    <span class="comment">// 3. Register your custom listener</span>
+    listenerManager.<span class="method">register</span>(<span class="keyword">new</span> <span class="class-name">MyCustomListener</span>());
 }</pre>
         </div>
     </section>
