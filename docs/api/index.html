@@ -30,13 +30,50 @@
 <span class="class-name">MCEconomyProvider</span> provider = <span class="class-name">MCEconomyProvider</span>.<span class="method">getInstance</span>();
 
 <span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
-    <span class="comment">// 2. Get balance for a player (Asynchronous)</span>
+    <span class="comment">// --- 2. GET BALANCE ---</span>
+    <span class="comment">// Default (uses "coin")</span>
+    provider.<span class="method">getCoin</span>(playerUuid).<span class="method">thenAccept</span>(balance -> {
+        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Default Balance: "</span> + balance);
+    });
+    <span class="comment">// Specific Coin Type</span>
     provider.<span class="method">getCoin</span>(playerUuid, <span class="string">"gold"</span>).<span class="method">thenAccept</span>(balance -> {
-        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Balance is: "</span> + balance);
+        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Gold Balance: "</span> + balance);
     });
 
-    <span class="comment">// 3. Add coins to a player</span>
-    provider.<span class="method">addCoin</span>(playerUuid, <span class="string">"silver"</span>, <span class="keyword">100</span>);
+
+    <span class="comment">// --- 3. ADD COINS ---</span>
+    <span class="comment">// Default</span>
+    provider.<span class="method">addCoin</span>(playerUuid, <span class="keyword">100</span>);
+    <span class="comment">// Specific</span>
+    provider.<span class="method">addCoin</span>(playerUuid, <span class="string">"silver"</span>, <span class="keyword">50</span>);
+
+
+    <span class="comment">// --- 4. MINUS COINS ---</span>
+    <span class="comment">// Default</span>
+    provider.<span class="method">minusCoin</span>(playerUuid, <span class="keyword">50</span>);
+    <span class="comment">// Specific</span>
+    provider.<span class="method">minusCoin</span>(playerUuid, <span class="string">"gold"</span>, <span class="keyword">10</span>);
+
+
+    <span class="comment">// --- 5. SET BALANCE ---</span>
+    <span class="comment">// Default</span>
+    provider.<span class="method">setCoin</span>(playerUuid, <span class="keyword">1000</span>);
+    <span class="comment">// Specific</span>
+    provider.<span class="method">setCoin</span>(playerUuid, <span class="string">"copper"</span>, <span class="keyword">500</span>);
+
+
+    <span class="comment">// --- 6. SEND COINS (Transfer) ---</span>
+    <span class="comment">// Default</span>
+    provider.<span class="method">sendCoin</span>(senderUuid, receiverUuid, <span class="keyword">100</span>);
+    <span class="comment">// Specific</span>
+    provider.<span class="method">sendCoin</span>(senderUuid, receiverUuid, <span class="string">"gold"</span>, <span class="keyword">25</span>);
+
+
+    <span class="comment">// --- 7. UTILITY ---</span>
+    <span class="comment">// Ensure player exists in DB (creates default if missing)</span>
+    provider.<span class="method">ensurePlayerExist</span>(playerUuid).<span class="method">thenAccept</span>(exists -> {
+        <span class="keyword">if</span> (exists) Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Player is ready."</span>);
+    });
 }</pre>
         </div>
     </section>
