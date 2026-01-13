@@ -14,11 +14,11 @@
 
     <main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
         <h1 style="color: var(--accent-color);">API Module Documentation</h1>
-        <p>Learn how to interact with the MCEconomy provider and register subcommands.</p>
+        <p>Learn how to interact with the MCEconomy provider, register subcommands, and handle listeners.</p>
 
         <section>
         <h2>1. Using the Provider</h2>
-        <p>The <code>MCEconomyProvider</code> handles all database operations asynchronously. Addons should retrieve the provider via the <strong>Bukkit Services Manager</strong>.</p>
+        <p>The <code>MCEconomyProvider</code> handles all database operations asynchronously. Addons should retrieve the provider via the static <strong>Singleton Instance</strong>.</p>
         
         <div class="code-container">
             <div class="code-header">
@@ -26,13 +26,10 @@
                 <span>ProviderAccess.java</span>
             </div>
             <pre>
-<span class="comment">// 1. Retrieve the Provider from Services Manager</span>
-<span class="class-name">RegisteredServiceProvider</span>&lt;<span class="class-name">MCEconomyProvider</span>&gt; rsp = 
-    Bukkit.<span class="method">getServicesManager</span>().<span class="method">getRegistration</span>(<span class="class-name">MCEconomyProvider</span>.class);
+<span class="comment">// 1. Retrieve the Provider Instance</span>
+<span class="class-name">MCEconomyProvider</span> provider = <span class="class-name">MCEconomyProvider</span>.<span class="method">getInstance</span>();
 
-<span class="keyword">if</span> (rsp != <span class="keyword">null</span>) {
-    <span class="class-name">MCEconomyProvider</span> provider = rsp.<span class="method">getProvider</span>();
-
+<span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
     <span class="comment">// 2. Get balance for a player (Asynchronous)</span>
     provider.<span class="method">getCoin</span>(playerUuid, <span class="string">"gold"</span>).<span class="method">thenAccept</span>(balance -> {
         Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Balance is: "</span> + balance);
@@ -46,7 +43,7 @@
 
         <section>
         <h2>2. Registering Subcommands (Addons)</h2>
-        <p>Addons should use the <strong>Bukkit Services Manager</strong> to find the Command Manager. This prevents hard dependencies.</p>
+        <p>Addons can register custom subcommands by accessing the Command Manager through the provider instance.</p>
         
         <div class="code-container">
             <div class="code-header">
@@ -54,15 +51,38 @@
                 <span>AddonRegistration.java</span>
             </div>
             <pre>
-<span class="comment">// 1. Retrieve the Command Manager from Services Manager</span>
-<span class="class-name">RegisteredServiceProvider</span>&lt;<span class="class-name">MCEconomyCommandManager</span>&gt; rsp = 
-    Bukkit.<span class="method">getServicesManager</span>().<span class="method">getRegistration</span>(<span class="class-name">MCEconomyCommandManager</span>.class);
+<span class="comment">// 1. Retrieve the Provider</span>
+<span class="class-name">MCEconomyProvider</span> provider = <span class="class-name">MCEconomyProvider</span>.<span class="method">getInstance</span>();
 
-<span class="keyword">if</span> (rsp != <span class="keyword">null</span>) {
-    <span class="class-name">MCEconomyCommandManager</span> manager = rsp.<span class="method">getProvider</span>();
+<span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
+    <span class="comment">// 2. Get the Command Manager</span>
+    <span class="class-name">MCEconomyCommandManager</span> manager = provider.<span class="method">getCommandManager</span>();
 
-    <span class="comment">// 2. Register your custom logic</span>
+    <span class="comment">// 3. Register your custom logic</span>
     manager.<span class="method">register</span>(<span class="string">"mycommand"</span>, <span class="keyword">new</span> <span class="class-name">MyCustomHandle</span>());
+}</pre>
+        </div>
+    </section>
+
+        <section>
+        <h2>3. Registering Event Listeners (Addons)</h2>
+        <p>Addons can register custom event listeners through the Listener Manager. This ensures the main plugin tracks all related listeners.</p>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span>Java</span>
+                <span>ListenerRegistration.java</span>
+            </div>
+            <pre>
+<span class="comment">// 1. Retrieve the Provider</span>
+<span class="class-name">MCEconomyProvider</span> provider = <span class="class-name">MCEconomyProvider</span>.<span class="method">getInstance</span>();
+
+<span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
+    <span class="comment">// 2. Get the Listener Manager</span>
+    <span class="class-name">MCEconomyListenerManager</span> listenerManager = provider.<span class="method">getListenerManager</span>();
+
+    <span class="comment">// 3. Register your custom listener</span>
+    listenerManager.<span class="method">register</span>(<span class="keyword">new</span> <span class="class-name">MyCustomListener</span>());
 }</pre>
         </div>
     </section>
