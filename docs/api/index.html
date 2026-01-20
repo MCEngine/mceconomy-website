@@ -18,7 +18,7 @@
 
         <section>
         <h2>1. Using the Provider</h2>
-        <p>The <code>MCEconomyProvider</code> handles all database operations asynchronously. Addons should retrieve the provider via the static <strong>Singleton Instance</strong>.</p>
+        <p>The <code>MCEconomyProvider</code> handles all database operations asynchronously. It now supports multiple account types (e.g., "player", "clan", "guild").</p>
         
         <div class="code-container">
             <div class="code-header">
@@ -31,48 +31,31 @@
 
 <span class="keyword">if</span> (provider != <span class="keyword">null</span>) {
     <span class="comment">// --- 2. GET BALANCE ---</span>
-    <span class="comment">// Default (uses "coin")</span>
-    provider.<span class="method">getCoin</span>(playerUuid).<span class="method">thenAccept</span>(balance -> {
-        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Default Balance: "</span> + balance);
+    <span class="comment">// Example: Get a Clan's "gold" balance</span>
+    provider.<span class="method">getCoin</span>(clanUuid, <span class="string">"clan"</span>, <span class="string">"gold"</span>).<span class="method">thenAccept</span>(balance -> {
+        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Clan Gold Balance: "</span> + balance);
     });
-    <span class="comment">// Specific Coin Type</span>
-    provider.<span class="method">getCoin</span>(playerUuid, <span class="string">"gold"</span>).<span class="method">thenAccept</span>(balance -> {
-        Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Gold Balance: "</span> + balance);
-    });
-
 
     <span class="comment">// --- 3. ADD COINS ---</span>
-    <span class="comment">// Default</span>
-    provider.<span class="method">addCoin</span>(playerUuid, <span class="keyword">100</span>);
-    <span class="comment">// Specific</span>
-    provider.<span class="method">addCoin</span>(playerUuid, <span class="string">"silver"</span>, <span class="keyword">50</span>);
-
+    <span class="comment">// Example: Add 50 "silver" to a Player</span>
+    provider.<span class="method">addCoin</span>(playerUuid, <span class="string">"player"</span>, <span class="string">"silver"</span>, <span class="keyword">50</span>);
 
     <span class="comment">// --- 4. MINUS COINS ---</span>
-    <span class="comment">// Default</span>
-    provider.<span class="method">minusCoin</span>(playerUuid, <span class="keyword">50</span>);
-    <span class="comment">// Specific</span>
-    provider.<span class="method">minusCoin</span>(playerUuid, <span class="string">"gold"</span>, <span class="keyword">10</span>);
-
+    <span class="comment">// Example: Remove 100 default "coin" from a Guild</span>
+    provider.<span class="method">minusCoin</span>(guildUuid, <span class="string">"guild"</span>, <span class="keyword">100</span>);
 
     <span class="comment">// --- 5. SET BALANCE ---</span>
-    <span class="comment">// Default</span>
-    provider.<span class="method">setCoin</span>(playerUuid, <span class="keyword">1000</span>);
-    <span class="comment">// Specific</span>
-    provider.<span class="method">setCoin</span>(playerUuid, <span class="string">"copper"</span>, <span class="keyword">500</span>);
-
+    <span class="comment">// Example: Set a Player's "copper" balance to 500</span>
+    provider.<span class="method">setCoin</span>(playerUuid, <span class="string">"player"</span>, <span class="string">"copper"</span>, <span class="keyword">500</span>);
 
     <span class="comment">// --- 6. SEND COINS (Transfer) ---</span>
-    <span class="comment">// Default</span>
-    provider.<span class="method">sendCoin</span>(senderUuid, receiverUuid, <span class="keyword">100</span>);
-    <span class="comment">// Specific</span>
-    provider.<span class="method">sendCoin</span>(senderUuid, receiverUuid, <span class="string">"gold"</span>, <span class="keyword">25</span>);
-
+    <span class="comment">// Example: Transfer 25 "gold" from a Player to a Clan</span>
+    provider.<span class="method">sendCoin</span>(senderUuid, <span class="string">"player"</span>, receiverUuid, <span class="string">"clan"</span>, <span class="string">"gold"</span>, <span class="keyword">25</span>);
 
     <span class="comment">// --- 7. UTILITY ---</span>
-    <span class="comment">// Ensure player exists in DB (creates default if missing)</span>
-    provider.<span class="method">ensurePlayerExist</span>(playerUuid).<span class="method">thenAccept</span>(exists -> {
-        <span class="keyword">if</span> (exists) Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Player is ready."</span>);
+    <span class="comment">// Example: Ensure a Clan account exists in DB (creates default if missing)</span>
+    provider.<span class="method">ensureAccountExist</span>(clanUuid, <span class="string">"clan"</span>).<span class="method">thenAccept</span>(exists -> {
+        <span class="keyword">if</span> (exists) Bukkit.<span class="method">getLogger</span>().<span class="method">info</span>(<span class="string">"Clan account is ready."</span>);
     });
 }</pre>
         </div>
