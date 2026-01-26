@@ -36,8 +36,7 @@
                 "eamodio.gitlens",
 
                 // --- UTILITIES ---
-                "esbenp.prettier-vscode",
-                "codeium.codeium"
+                "esbenp.prettier-vscode"
             ]
         }
     },
@@ -46,3 +45,4 @@
     "postCreateCommand": "echo '--- ENVIRONMENT READY ---' && git --version && node --version && npm --version",
     "remoteUser": "vscode"
 }
+
