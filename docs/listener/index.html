@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCEconomy - Listeners</title>
+    <link rel="stylesheet" href="../css/home/main.css">
+    <link rel="stylesheet" href="../css/partial/header.css">
+    <link rel="stylesheet" href="../css/partial/footer.css">
+    <link rel="stylesheet" href="../css/share/code.css">
+</head>
+<body class="night-theme">
+    <div id="header-placeholder"></div>
+
+    <main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+        <h1 style="color: var(--accent-color);">Coin Item Mechanics</h1>
+        <p>Documentation on how physical currency items are handled and redeemed within the world.</p>
+
+        <section>
+            <h2>1. Redemption Logic</h2>
+            <p>The <code>HandleCoinItem</code> listener monitors player interactions. When a player <strong>Right Clicks</strong> (on air or a block) while holding a valid Coin Item, the following occurs:</p>
+            <ul>
+                <li>The event is cancelled (preventing block placement if the item is a block/head).</li>
+                <li>The item stack is reduced by <strong>1</strong>.</li>
+                <li>The value stored in the item is added to the player's balance.</li>
+                <li>A success message is sent to the player.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>2. NBT Data Structure</h2>
+            <p>For an item to be recognized as a valid Coin Item, it must contain specific data within its <code>PersistentDataContainer</code>. This allows admins to create custom items using other plugins or commands that MCEconomy will recognize.</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>PersistentDataContainer Keys</span>
+                    <span>Namespace: <span style="color: var(--accent-color)">mcengine_mceconomy</span></span>
+                </div>
+                <pre>
+<span class="comment">// 1. The Currency Type (String)</span>
+<span class="keyword">key</span>: <span class="string">"coin_type"</span>
+<span class="keyword">type</span>: <span class="class-name">STRING</span>
+<span class="keyword">value</span>: <span class="string">"gold"</span> <span class="comment">// (or "silver", "copper", etc.)</span>
+
+<span class="comment">// 2. The Value Amount (Integer)</span>
+<span class="keyword">key</span>: <span class="string">"coin_amount"</span>
+<span class="keyword">type</span>: <span class="class-name">INTEGER</span>
+<span class="keyword">value</span>: <span class="keyword">100</span></pre>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        const loadPartial = (id, path) => {
+            fetch(path).then(res => res.text()).then(data => document.getElementById(id).innerHTML = data);
+        };
+        loadPartial('header-placeholder', '../partial/header.html');
+        loadPartial('footer-placeholder', '../partial/footer.html');
+    </script>
+</body>
+</html>
