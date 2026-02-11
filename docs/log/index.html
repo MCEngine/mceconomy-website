@@ -254,9 +254,60 @@
             }
             
             async discoverLogPaths() {
-                // For now, return the known path. In a real implementation,
-                // this could scan directories or use an API endpoint
-                return ['2026/0/3/3'];
+                try {
+                    // Try to discover log directories by checking common patterns
+                    const potentialPaths = [
+                        '2026/0/3/3',
+                        '2026/0/3/4', 
+                        '2026/0/4/1'
+                    ];
+                    
+                    const validPaths = [];
+                    
+                    // Check each potential path to see if logs.md exists
+                    for (const path of potentialPaths) {
+                        try {
+                            const response = await fetch(`./${path}/logs.md`, { method: 'HEAD' });
+                            if (response.ok) {
+                                validPaths.push(path);
+                            }
+                        } catch (error) {
+                            // Path doesn't exist, skip it
+                            console.debug(`Path ${path} not found`);
+                        }
+                    }
+                    
+                    // Also try to discover any additional logs by checking common date patterns
+                    const years = ['2026'];
+                    const months = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+                    const days = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'];
+                    const iterations = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                    
+                    for (const year of years) {
+                        for (const month of months) {
+                            for (const day of days) {
+                                for (const iteration of iterations) {
+                                    const path = `${year}/${month}/${day}/${iteration}`;
+                                    if (!potentialPaths.includes(path)) {
+                                        try {
+                                            const response = await fetch(`./${path}/logs.md`, { method: 'HEAD' });
+                                            if (response.ok) {
+                                                validPaths.push(path);
+                                            }
+                                        } catch (error) {
+                                            // Path doesn't exist, skip it
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    return validPaths;
+                } catch (error) {
+                    console.error('Failed to discover log paths:', error);
+                    return ['2026/0/3/3']; // Fallback to original
+                }
             }
             
             async loadFallbackLog() {
