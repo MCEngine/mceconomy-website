@@ -108,12 +108,15 @@
         
         .nav-list {
             list-style: none;
-            overflow-y: auto;
-            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
         }
         
         .nav-item {
-            margin-bottom: 0.5rem;
+            flex: 0 0 auto;
         }
         
         .nav-link {
@@ -126,6 +129,7 @@
             transition: all 0.3s ease;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
+            white-space: nowrap;
         }
         
         .nav-link:hover {
