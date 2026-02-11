@@ -7,11 +7,19 @@ header {
     align-items: center;
 }
 
+:root {
+    --accent-color: #87CEEB; /* sky blue */
+}
+
 .header-logo {
     text-decoration: none;
     font-size: 1.4rem; /* Slightly larger for better visibility */
     display: inline-block;
     transition: transform 0.2s ease;
+}
+
+.header-logo strong {
+    color: var(--accent-color);
 }
 
 .header-logo:hover {
