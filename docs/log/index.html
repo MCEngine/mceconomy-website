@@ -6,6 +6,7 @@
     <title>MCEconomy Project Logs</title>
     <link rel="stylesheet" href="../css/partial/header.css">
     <link rel="stylesheet" href="../css/partial/footer.css">
+    <link rel="stylesheet" href="../css/log/main.css">
     <style>
         * {
             margin: 0;
@@ -182,8 +183,7 @@
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
+<body class="night-theme">
     <div id="header-placeholder"></div>
     
     <div class="container">
@@ -433,18 +433,14 @@
         // Initialize the log viewer when the page loads
         document.addEventListener('DOMContentLoaded', async () => {
             // Load header and footer partials
-            try {
-                const headerResponse = await fetch('../partial/header.html');
-                const headerContent = await headerResponse.text();
-                document.getElementById('header-placeholder').innerHTML = headerContent;
-                
-                const footerResponse = await fetch('../partial/footer.html');
-                const footerContent = await footerResponse.text();
-                document.getElementById('footer-placeholder').innerHTML = footerContent;
-            } catch (error) {
-                console.error('Failed to load partials:', error);
-            }
-            
+            const loadPartial = (id, path) => {
+                fetch(path)
+                    .then(response => response.text())
+                    .then(data => document.getElementById(id).innerHTML = data);
+            };
+            loadPartial('header-placeholder', '../partial/header.html');
+            loadPartial('footer-placeholder', '../partial/footer.html');
+
             // Initialize log viewer
             new LogViewer();
         });
