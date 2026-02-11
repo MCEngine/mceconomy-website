@@ -45,7 +45,9 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             position: sticky;
             top: 2rem;
-            height: fit-content;
+            height: calc(100vh - 200px - 4rem);
+            display: flex;
+            flex-direction: column;
         }
         
         h1 {
@@ -105,6 +107,8 @@
         
         .nav-list {
             list-style: none;
+            overflow-y: auto;
+            flex: 1;
         }
         
         .nav-item {
@@ -223,10 +227,15 @@
             
             async loadLogs() {
                 try {
-                    // Discover log directories by fetching the log structure
-                    const logPaths = await this.discoverLogPaths();
-                    
-                    for (const path of logPaths) {
+                    const logPaths = await this.loadLogIndex();
+                    if (!Array.isArray(logPaths) || logPaths.length === 0) {
+                        throw new Error('Log index is empty');
+                    }
+
+                    // Load only a small set up front for fast first render
+                    const initialLoadCount = Math.min(20, logPaths.length);
+                    for (let i = 0; i < initialLoadCount; i++) {
+                        const path = logPaths[i];
                         try {
                             const content = await this.loadLogContent(path);
                             this.logs.push({
@@ -238,6 +247,16 @@
                             console.warn(`Failed to load log ${path}:`, error);
                         }
                     }
+
+                    // Keep remaining paths for lazy-loading when clicked
+                    for (let i = initialLoadCount; i < logPaths.length; i++) {
+                        const path = logPaths[i];
+                        this.logs.push({
+                            path: path,
+                            content: null,
+                            timestamp: this.parseTimestamp(path)
+                        });
+                    }
                     
                     // Sort logs by timestamp (newest first)
                     this.logs.sort((a, b) => b.timestamp - a.timestamp);
@@ -246,6 +265,14 @@
                     // Fallback to known path
                     await this.loadFallbackLog();
                 }
+            }
+
+            async loadLogIndex() {
+                const response = await fetch('./log-index.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`Failed to load log index (HTTP ${response.status})`);
+                }
+                return await response.json();
             }
             
             async loadLogContent(path) {
@@ -262,60 +289,7 @@
                 }
             }
             
-            async discoverLogPaths() {
-                try {
-                    // Try to discover log directories by checking common patterns
-                    const potentialPaths = [
-                        '2026/0/3/3'
-                    ];
-                    
-                    const validPaths = [];
-                    
-                    // Check each potential path to see if logs.md exists
-                    for (const path of potentialPaths) {
-                        try {
-                            const response = await fetch(`./${path}/logs.md`, { method: 'HEAD' });
-                            if (response.ok) {
-                                validPaths.push(path);
-                            }
-                        } catch (error) {
-                            // Path doesn't exist, skip it
-                            console.debug(`Path ${path} not found`);
-                        }
-                    }
-                    
-                    // Also try to discover any additional logs by checking common date patterns
-                    const years = ['2026'];
-                    const months = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
-                    const days = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'];
-                    const iterations = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                    
-                    for (const year of years) {
-                        for (const month of months) {
-                            for (const day of days) {
-                                for (const iteration of iterations) {
-                                    const path = `${year}/${month}/${day}/${iteration}`;
-                                    if (!potentialPaths.includes(path)) {
-                                        try {
-                                            const response = await fetch(`./${path}/logs.md`, { method: 'HEAD' });
-                                            if (response.ok) {
-                                                validPaths.push(path);
-                                            }
-                                        } catch (error) {
-                                            // Path doesn't exist, skip it
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    return validPaths;
-                } catch (error) {
-                    console.error('Failed to discover log paths:', error);
-                    return ['2026/0/3/3']; // Fallback to original
-                }
-            }
+
             
             async loadFallbackLog() {
                 try {
@@ -378,16 +352,20 @@
                 // Check if log is already loaded
                 let log = this.logs.find(l => l.path === path);
                 
-                if (!log) {
-                    // Load the log dynamically
+                if (!log || !log.content) {
+                    // Load the log dynamically (or fill missing content)
                     try {
                         const content = await this.loadLogContent(path);
-                        log = {
-                            path: path,
-                            content: content,
-                            timestamp: this.parseTimestamp(path)
-                        };
-                        this.logs.push(log);
+                        if (!log) {
+                            log = {
+                                path: path,
+                                content: content,
+                                timestamp: this.parseTimestamp(path)
+                            };
+                            this.logs.push(log);
+                        } else {
+                            log.content = content;
+                        }
                         
                         // Re-sort logs by timestamp
                         this.logs.sort((a, b) => b.timestamp - a.timestamp);
