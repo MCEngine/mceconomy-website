@@ -14,8 +14,8 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+            color: #e0e0e0;
+            background-color: #1a1a1a;
         }
         
         .container {
@@ -28,46 +28,46 @@
         .main-content {
             flex: 1;
             padding: 2rem;
-            background: white;
+            background: #2d2d2d;
             margin-right: 1rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
         .sidebar {
             width: 300px;
             padding: 2rem 1rem;
-            background: white;
+            background: #2d2d2d;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             position: sticky;
             top: 2rem;
             height: fit-content;
         }
         
         h1 {
-            color: #2c3e50;
+            color: #64b5f6;
             margin-bottom: 1.5rem;
             font-size: 2.5rem;
-            border-bottom: 3px solid #3498db;
+            border-bottom: 3px solid #42a5f5;
             padding-bottom: 0.5rem;
         }
         
         h2 {
-            color: #34495e;
+            color: #90caf9;
             margin: 2rem 0 1rem 0;
             font-size: 1.8rem;
         }
         
         h3 {
-            color: #2c3e50;
+            color: #64b5f6;
             margin: 1.5rem 0 0.5rem 0;
             font-size: 1.4rem;
         }
         
         .log-entry {
-            background: #f8f9fa;
-            border-left: 4px solid #3498db;
+            background: #3d3d3d;
+            border-left: 4px solid #42a5f5;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             border-radius: 0 8px 8px 0;
@@ -76,26 +76,27 @@
         
         .log-entry:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 4px 15px rgba(66, 165, 245, 0.3);
         }
         
         .log-path {
             font-family: 'Courier New', monospace;
-            background: #2c3e50;
-            color: #ecf0f1;
+            background: #1a1a1a;
+            color: #64b5f6;
             padding: 0.3rem 0.6rem;
             border-radius: 4px;
             font-size: 0.9rem;
             margin-bottom: 1rem;
             display: inline-block;
+            text-align: center;
         }
         
         .nav-title {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #64b5f6;
             margin-bottom: 1rem;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 2px solid #42a5f5;
             padding-bottom: 0.5rem;
         }
         
@@ -110,8 +111,8 @@
         .nav-link {
             display: block;
             padding: 0.5rem 0.8rem;
-            background: #ecf0f1;
-            color: #2c3e50;
+            background: #404040;
+            color: #e0e0e0;
             text-decoration: none;
             border-radius: 4px;
             transition: all 0.3s ease;
@@ -120,20 +121,20 @@
         }
         
         .nav-link:hover {
-            background: #3498db;
-            color: white;
+            background: #42a5f5;
+            color: #1a1a1a;
             transform: translateX(3px);
         }
         
         .nav-link.active {
-            background: #2c3e50;
-            color: white;
+            background: #1976d2;
+            color: #ffffff;
         }
         
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #7f8c8d;
+            color: #9e9e9e;
         }
         
         .error {
@@ -144,14 +145,15 @@
             margin-bottom: 1rem;
         }
         
-        .markdown-content h1 { font-size: 2rem; margin: 1.5rem 0; }
-        .markdown-content h2 { font-size: 1.5rem; margin: 1.2rem 0; }
-        .markdown-content h3 { font-size: 1.2rem; margin: 1rem 0; }
+        .markdown-content h1 { font-size: 2rem; margin: 1.5rem 0; color: #64b5f6; }
+        .markdown-content h2 { font-size: 1.5rem; margin: 1.2rem 0; color: #90caf9; }
+        .markdown-content h3 { font-size: 1.2rem; margin: 1rem 0; color: #64b5f6; }
         .markdown-content ul { margin-left: 1.5rem; margin-bottom: 1rem; }
         .markdown-content li { margin-bottom: 0.3rem; }
-        .markdown-content strong { color: #2c3e50; }
+        .markdown-content strong { color: #90caf9; }
         .markdown-content code { 
-            background: #f1f2f6; 
+            background: #1a1a1a; 
+            color: #64b5f6;
             padding: 0.2rem 0.4rem; 
             border-radius: 3px; 
             font-family: 'Courier New', monospace;
@@ -335,9 +337,16 @@ MCExtension integration.`;
             
             displayLog(log) {
                 const container = document.getElementById('logs-container');
+                const pathParts = log.path.split('/');
+                const datePath = `${pathParts[0]}/${pathParts[1]}/${pathParts[2]}`;
+                const iteration = pathParts[3];
+                
                 container.innerHTML = `
                     <div class="log-entry">
-                        <div class="log-path">${log.path}/logs.md</div>
+                        <div class="log-path">
+                            <div>${datePath}</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.8;">Iteration ${iteration}</div>
+                        </div>
                         <div class="markdown-content">
                             ${this.markdownToHtml(log.content)}
                         </div>
