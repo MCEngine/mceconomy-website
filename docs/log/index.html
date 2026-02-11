@@ -213,67 +213,63 @@
             }
             
             async loadLogs() {
-                // Simulate recursive loading of log files
-                // In a real implementation, this would make API calls or read from a server
-                const logPaths = [
-                    '2026/0/3/3',
-                    // Future logs will be added here in the format yyyy/m/m/iteration
-                ];
-                
-                for (const path of logPaths) {
-                    try {
-                        const content = await this.loadLogContent(path);
-                        this.logs.push({
-                            path: path,
-                            content: content,
-                            timestamp: this.parseTimestamp(path)
-                        });
-                    } catch (error) {
-                        console.warn(`Failed to load log ${path}:`, error);
+                try {
+                    // Discover log directories by fetching the log structure
+                    const logPaths = await this.discoverLogPaths();
+                    
+                    for (const path of logPaths) {
+                        try {
+                            const content = await this.loadLogContent(path);
+                            this.logs.push({
+                                path: path,
+                                content: content,
+                                timestamp: this.parseTimestamp(path)
+                            });
+                        } catch (error) {
+                            console.warn(`Failed to load log ${path}:`, error);
+                        }
                     }
+                    
+                    // Sort logs by timestamp (newest first)
+                    this.logs.sort((a, b) => b.timestamp - a.timestamp);
+                } catch (error) {
+                    console.error('Failed to discover log paths:', error);
+                    // Fallback to known path
+                    await this.loadFallbackLog();
                 }
-                
-                // Sort logs by timestamp (newest first)
-                this.logs.sort((a, b) => b.timestamp - a.timestamp);
             }
             
             async loadLogContent(path) {
-                // In a real implementation, this would fetch the actual file content
-                // For now, we'll return the content we know exists
-                if (path === '2026/0/3/3') {
-                    return `# MCEconomy Project Changes Report
-
-## Project Changes Summary (bc3e599 → 372ad89)
-
-### Code Refactoring & Cleanup
-- **Removed getter methods** from MCEconomy.java (getProvider, getExtensionManager)
-  since instances are now accessed via MCEconomyProvider
-- **Removed publishing configuration** from build.gradle including maven-publish plugin
-  and all repository/credential setup for artifact publishing
-
-### Documentation Improvements  
-- **Converted placeholder files** to proper package-info.java with comprehensive
-  javadocs for both API and Common packages
-- **Added detailed package documentation** including key components, usage examples,
-  and proper author/version information
-
-### Build Configuration Updates
-- **Added MCExtension repository** configuration back to build.gradle for dependency
-  resolution with GitHub Packages credentials
-- **Updated project iteration** from 2 to 3 in gradle.properties for version management
-
-### Statistics
-- **Total commits processed**: 9
-- **Files modified**: 3 main files across multiple modules
-- **Net changes**: Significant code reduction with improved documentation
-- **Branch workflow**: All changes followed proper git workflow with feature branches
-
-### Impact
-These changes streamline the codebase by removing unnecessary methods and publishing
-complexity while improving documentation and maintaining required dependencies for
-MCExtension integration.`;
+                try {
+                    // Fetch the actual log file content
+                    const response = await fetch(`./${path}/logs.md`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return await response.text();
+                } catch (error) {
+                    console.error(`Failed to load log ${path}:`, error);
+                    throw error;
                 }
-                throw new Error('Log content not found');
+            }
+            
+            async discoverLogPaths() {
+                // For now, return the known path. In a real implementation,
+                // this could scan directories or use an API endpoint
+                return ['2026/0/3/3'];
+            }
+            
+            async loadFallbackLog() {
+                try {
+                    const content = await this.loadLogContent('2026/0/3/3');
+                    this.logs.push({
+                        path: '2026/0/3/3',
+                        content: content,
+                        timestamp: this.parseTimestamp('2026/0/3/3')
+                    });
+                } catch (error) {
+                    throw new Error('No logs available and fallback failed');
+                }
             }
             
             parseTimestamp(path) {
@@ -298,9 +294,9 @@ MCExtension integration.`;
                     a.className = 'nav-link';
                     if (index === 0) a.classList.add('active');
                     a.textContent = log.path;
-                    a.onclick = (e) => {
+                    a.onclick = async (e) => {
                         e.preventDefault();
-                        this.selectLog(log.path);
+                        await this.selectLog(log.path);
                     };
                     
                     li.appendChild(a);
@@ -320,19 +316,41 @@ MCExtension integration.`;
                 this.displayLog(this.logs[0]);
             }
             
-            selectLog(path) {
-                const log = this.logs.find(l => l.path === path);
-                if (log) {
-                    this.displayLog(log);
-                    
-                    // Update active state in navigation
-                    document.querySelectorAll('.nav-link').forEach(link => {
-                        link.classList.remove('active');
-                        if (link.textContent === path) {
-                            link.classList.add('active');
-                        }
-                    });
+            async selectLog(path) {
+                // Check if log is already loaded
+                let log = this.logs.find(l => l.path === path);
+                
+                if (!log) {
+                    // Load the log dynamically
+                    try {
+                        const content = await this.loadLogContent(path);
+                        log = {
+                            path: path,
+                            content: content,
+                            timestamp: this.parseTimestamp(path)
+                        };
+                        this.logs.push(log);
+                        
+                        // Re-sort logs by timestamp
+                        this.logs.sort((a, b) => b.timestamp - a.timestamp);
+                        
+                        // Re-render navigation to include new log
+                        this.renderNavigation();
+                    } catch (error) {
+                        this.showError(`Failed to load log ${path}: ${error.message}`);
+                        return;
+                    }
                 }
+                
+                this.displayLog(log);
+                
+                // Update active state in navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.textContent === path) {
+                        link.classList.add('active');
+                    }
+                });
             }
             
             displayLog(log) {
