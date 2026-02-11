@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCEconomy Project Logs</title>
+    <link rel="stylesheet" href="../css/partial/header.css">
+    <link rel="stylesheet" href="../css/partial/footer.css">
     <style>
         * {
             margin: 0;
@@ -22,7 +24,8 @@
             display: flex;
             max-width: 1400px;
             margin: 0 auto;
-            min-height: 100vh;
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
         }
         
         .main-content {
@@ -176,6 +179,9 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    
     <div class="container">
         <main class="main-content">
             <h1>MCEconomy Project Logs</h1>
@@ -193,6 +199,9 @@
             </nav>
         </aside>
     </div>
+    
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
 
     <script>
         class LogViewer {
@@ -444,7 +453,21 @@
         }
         
         // Initialize the log viewer when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load header and footer partials
+            try {
+                const headerResponse = await fetch('../partial/header.html');
+                const headerContent = await headerResponse.text();
+                document.getElementById('header-placeholder').innerHTML = headerContent;
+                
+                const footerResponse = await fetch('../partial/footer.html');
+                const footerContent = await footerResponse.text();
+                document.getElementById('footer-placeholder').innerHTML = footerContent;
+            } catch (error) {
+                console.error('Failed to load partials:', error);
+            }
+            
+            // Initialize log viewer
             new LogViewer();
         });
     </script>
